@@ -1,22 +1,36 @@
 package main
 
 import (
-	"fmt"
-	//"github.com/phdesign/game-of-life-go/display"
+	"flag"
+	"github.com/phdesign/game-of-life-go/app"
+	"github.com/phdesign/game-of-life-go/display"
+	"strconv"
+	"time"
 )
 
-// Hello returns a greeting for the named person.
-func Hello(name string) string {
-	// Return a greeting that embeds the name in a message.
-	message := fmt.Sprintf("Hi, %v. Welcome!", name)
-	return message
-}
-
 func main() {
-	// Get a greeting message and print it.
-	message := Hello("Gladys")
-	fmt.Println(message)
-	//w, _ := display.Init()
-	//fmt.Println(w)
-	//display.Close()
+	flag.Parse()
+	seedString := flag.Arg(0)
+	var seed int64
+	if seedString != "" {
+		var err error
+		seed, err = strconv.ParseInt(seedString, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		seed = time.Now().UnixNano()
+	}
+
+	w, h := display.Init()
+
+	board := app.Seed(w, h, seed)
+	display.Draw(board, w)
+
+	time.Sleep(500 * time.Millisecond)
+
+	app.Tick(board, w, h)
+	display.Draw(board, w)
+
+	display.Close()
 }
