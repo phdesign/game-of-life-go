@@ -42,8 +42,8 @@ loop:
 }
 
 func Draw(board [][]int8, seed int64, generation, w, h int) {
-	for row := 0; row < len(board)-2; row += 2 {
-		for col := 0; col < len(board[0])-2; col += 2 {
+	for row := 0; row < len(board)-1; row += 2 {
+		for col := 0; col < len(board[0])-1; col += 2 {
 			x := col / 2
 			y := row / 2
 			quad := [4]int8{

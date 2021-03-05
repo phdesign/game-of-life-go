@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const delay int = 150
+
 func main() {
 	flag.Parse()
 	seedString := flag.Arg(0)
@@ -24,16 +26,18 @@ func main() {
 
 	generation := 0
 	w, h := display.Init()
+	width := w * 2
+	height := h * 2
 
-	board := app.NewBoard(w*2, h*2)
+	board := app.NewBoard(width, height)
 	board = app.Seed(board, seed)
-	display.Draw(board, seed, generation, w*2, h*2)
+	display.Draw(board, seed, generation, width, height)
 
 	display.Loop(func() {
 		generation++
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(time.Duration(delay) * time.Millisecond)
 		board = app.Tick(board)
-		display.Draw(board, seed, generation, w*2, h*2)
+		display.Draw(board, seed, generation, width, height)
 	})
 
 	display.Close()
