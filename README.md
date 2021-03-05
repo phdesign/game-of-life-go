@@ -12,4 +12,4 @@ go run main.go <seed>
 
 Press `Esc` to quit.
 
-![screenshot](/Users/paul/Projects/sandbox/game-of-life-go/screenshot.png)
+![screenshot](./screenshot.png)
