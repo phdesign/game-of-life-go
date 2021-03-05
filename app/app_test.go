@@ -1,62 +1,90 @@
 package app
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-/*
-0 1 2.3
-4 5.6 7
-8.9.0 1
-*/
-func TestCountNeighbours(t *testing.T) {
+func TestSeed(t *testing.T) {
+	w := 3
+	h := 3
+
+	t.Run("should initalise a board with some live cells", func(t *testing.T) {
+		want := [][]int8{
+			[]int8{0, 0, 0},
+			[]int8{0, 1, 0},
+			[]int8{1, 0, 0},
+		}
+		board := NewBoard(w, h)
+		got := Seed(board, 12)
+
+		assertBoardEqual(t, want, got)
+	})
+}
+
+func TestNewBoard(t *testing.T) {
 	w := 4
 	h := 3
-	board := make(map[int]bool)
-	for i := 0; i < w*h; i++ {
-		board[i] = false
-	}
-	board[2] = true
-	board[5] = true
-	board[9] = true
-	board[8] = true
 
 	t.Run("should count number of alive neighbours", func(t *testing.T) {
-		want := 3
-		got := countNeighbours(board, 6, w, h)
+		board := NewBoard(w, h)
 
+		got := len(board[0])
+		want := 4
 		if got != want {
-			t.Errorf("Want %d, got %d", want, got)
+			t.Errorf("Expected board width to be %d, got %d", want, got)
 		}
-	})
-
-	t.Run("should count number of alive neighbours in row only", func(t *testing.T) {
-		want := 1
-		got := countNeighbours(board, 7, w, h)
-
+		got = len(board)
+		want = 3
 		if got != want {
-			t.Errorf("Want %d, got %d", want, got)
+			t.Errorf("Expected board height to be %d, got %d", want, got)
 		}
 	})
 }
 
-func TestTick(t *testing.T) {
-	w := 4
-	h := 3
-	board := make(map[int]bool)
-	for i := 0; i < w*h; i++ {
-		board[i] = false
+func TestCountNeighbours(t *testing.T) {
+	board := [][]int8{
+		[]int8{1, 0, 0},
+		[]int8{1, 0, 0},
+		[]int8{1, 0, 0},
 	}
-	board[2] = true
-	board[5] = true
-	board[9] = true
-	board[8] = true
+
+	t.Run("should count number of alive neighbours", func(t *testing.T) {
+		assertIntEqual(t, 3, countNeighbours(board, 1, 1))
+		assertIntEqual(t, 0, countNeighbours(board, 1, 2))
+		assertIntEqual(t, 2, countNeighbours(board, 0, 1))
+	})
+}
+
+func TestTick(t *testing.T) {
+	board := [][]int8{
+		[]int8{1, 0, 0},
+		[]int8{1, 0, 0},
+		[]int8{1, 0, 0},
+	}
 
 	t.Run("should evolve by one generation", func(t *testing.T) {
-		want := true
-		Tick(board, w, h)
-		got := board[4]
-
-		if got != want {
-			t.Errorf("Want %v, got %v", want, got)
+		want := [][]int8{
+			[]int8{0, 0, 0},
+			[]int8{1, 1, 0},
+			[]int8{0, 0, 0},
 		}
+		got := Tick(board)
+
+		assertBoardEqual(t, want, got)
 	})
+}
+
+func assertIntEqual(t *testing.T, want, got int) {
+	t.Helper()
+	if want != got {
+		t.Errorf("Want %d, got %d", want, got)
+	}
+}
+
+func assertBoardEqual(t *testing.T, want, got [][]int8) {
+	t.Helper()
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("Want %v, got %v", want, got)
+	}
 }

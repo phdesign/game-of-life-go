@@ -24,13 +24,15 @@ func main() {
 
 	w, h := display.Init()
 
-	board := app.Seed(w, h, seed)
-	display.Draw(board, w)
+	board := app.NewBoard(w, h)
+	board = app.Seed(board, seed)
+	display.Draw(board)
 
-	time.Sleep(500 * time.Millisecond)
-
-	app.Tick(board, w, h)
-	display.Draw(board, w)
+	display.Loop(func() {
+		time.Sleep(200 * time.Millisecond)
+		board = app.Tick(board)
+		display.Draw(board)
+	})
 
 	display.Close()
 }

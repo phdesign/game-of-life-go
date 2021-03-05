@@ -1,6 +1,9 @@
 package display
 
-import "github.com/nsf/termbox-go"
+import (
+	"github.com/nsf/termbox-go"
+	"time"
+)
 
 func Init() (int, int) {
 	err := termbox.Init()
@@ -13,20 +16,44 @@ func Init() (int, int) {
 	return w, h
 }
 
-func Draw(board map[int]bool, width int) {
-	for pos, state := range board {
-		colour := termbox.ColorDefault
-		if state {
-			colour = termbox.ColorGreen
+func Loop(callback func()) {
+	event_queue := make(chan termbox.Event)
+	go func() {
+		for {
+			event_queue <- termbox.PollEvent()
 		}
-		x := pos % width
-		y := pos / width
-		termbox.SetCell(x, y, ' ', termbox.ColorDefault, colour)
+	}()
+
+	callback()
+loop:
+	for {
+		select {
+		case ev := <-event_queue:
+			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
+				break loop
+			}
+		default:
+			callback()
+			time.Sleep(10 * time.Millisecond)
+		}
+	}
+}
+
+func Draw(board [][]int8) {
+	for row, cells := range board {
+		for col, state := range cells {
+			colour := termbox.ColorDefault
+			if state == 1 {
+				colour = termbox.ColorGreen
+			}
+			x := col
+			y := row
+			termbox.SetCell(x, y, ' ', termbox.ColorDefault, colour)
+		}
 	}
 	termbox.Flush()
 }
 
 func Close() {
-	termbox.PollEvent()
 	termbox.Close()
 }

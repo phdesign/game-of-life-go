@@ -4,45 +4,73 @@ import (
 	"math/rand"
 )
 
-func countNeighbours(board map[int]bool, pos int, w int, h int) (count int) {
-	count = 0
-	neighbours := [8]int{pos - w - 1, pos - w, pos - w + 1, pos - 1, pos + 1, pos + w - 1, pos + w, pos + w + 1}
-	for _, n := range neighbours {
-		if n >= 0 && n < w*h {
-			if board[n] {
-				count++
-			}
-		}
-	}
-	return
+type coord struct {
+	col int
+	row int
 }
 
-func Seed(w int, h int, seed int64) map[int]bool {
-	board := make(map[int]bool)
-
-	for i := 0; i < w*h; i++ {
-		board[i] = false
+func countNeighbours(board [][]int8, row int, col int) int {
+	count := 0
+	neighbours := [8]coord{
+		coord{col - 1, row - 1}, coord{col, row - 1}, coord{col + 1, row - 1},
+		coord{col - 1, row}, coord{col + 1, row},
+		coord{col - 1, row + 1}, coord{col, row + 1}, coord{col + 1, row + 1},
 	}
 
-	rand.Seed(seed)
-	for i := 0; i < rand.Intn(w*h); i++ {
-		board[rand.Intn(w*h)] = true
+	for _, c := range neighbours {
+		if c.row >= 0 && c.row < len(board) &&
+			c.col >= 0 && c.col < len(board[0]) {
+			count += int(board[c.row][c.col])
+		}
 	}
+	return count
+}
 
+func cloneBoard(orig [][]int8) [][]int8 {
+	clone := make([][]int8, len(orig))
+	for i := range orig {
+		clone[i] = make([]int8, len(orig[i]))
+		copy(clone[i], orig[i])
+	}
+	return clone
+}
+
+func NewBoard(w int, h int) [][]int8 {
+	board := make([][]int8, h)
+	for i := range board {
+		board[i] = make([]int8, w)
+	}
 	return board
 }
 
-func Tick(board map[int]bool, w int, h int) {
-	for pos, alive := range board {
-		neighbours := countNeighbours(board, pos, w, h)
-		if alive {
-			if neighbours < 2 || neighbours > 3 {
-				board[pos] = false
-			}
-		} else {
-			if neighbours == 3 {
-				board[pos] = true
+func Seed(board [][]int8, seed int64) [][]int8 {
+	result := cloneBoard(board)
+	w := len(board[0])
+	rand.Seed(seed)
+	for row := range board {
+		for num := 0; num < rand.Intn(w); num++ {
+			col := rand.Intn(w)
+			result[row][col] = 1
+		}
+	}
+	return result
+}
+
+func Tick(board [][]int8) [][]int8 {
+	result := cloneBoard(board)
+	for row, cells := range board {
+		for col, alive := range cells {
+			neighbours := countNeighbours(board, row, col)
+			if alive == 1 {
+				if neighbours < 2 || neighbours > 3 {
+					result[row][col] = 0
+				}
+			} else {
+				if neighbours == 3 {
+					result[row][col] = 1
+				}
 			}
 		}
 	}
+	return result
 }
