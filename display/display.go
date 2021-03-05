@@ -53,11 +53,15 @@ func Draw(board [][]int8, seed int64, generation int) {
 			termbox.SetCell(x, y, ' ', termbox.ColorDefault, colour)
 		}
 	}
-	text := fmt.Sprintf("seed: %d, gen: %d", seed, generation)
-	for i, char := range text {
-		termbox.SetChar(i, 0, rune(char))
-	}
+	printText("Press ESC to quit", 0)
+	printText(fmt.Sprintf("seed: %d, gen: %d", seed, generation), 1)
 	termbox.Flush()
+}
+
+func printText(text string, row int) {
+	for i, char := range text {
+		termbox.SetChar(i, row, rune(char))
+	}
 }
 
 func Close() {
