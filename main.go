@@ -22,16 +22,18 @@ func main() {
 		seed = time.Now().UnixNano()
 	}
 
+	generation := 0
 	w, h := display.Init()
 
 	board := app.NewBoard(w, h)
 	board = app.Seed(board, seed)
-	display.Draw(board)
+	display.Draw(board, seed, generation)
 
 	display.Loop(func() {
+		generation++
 		time.Sleep(200 * time.Millisecond)
 		board = app.Tick(board)
-		display.Draw(board)
+		display.Draw(board, seed, generation)
 	})
 
 	display.Close()

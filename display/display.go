@@ -1,8 +1,10 @@
 package display
 
 import (
-	"github.com/nsf/termbox-go"
+	"fmt"
 	"time"
+
+	"github.com/nsf/termbox-go"
 )
 
 func Init() (int, int) {
@@ -39,7 +41,7 @@ loop:
 	}
 }
 
-func Draw(board [][]int8) {
+func Draw(board [][]int8, seed int64, generation int) {
 	for row, cells := range board {
 		for col, state := range cells {
 			colour := termbox.ColorDefault
@@ -50,6 +52,10 @@ func Draw(board [][]int8) {
 			y := row
 			termbox.SetCell(x, y, ' ', termbox.ColorDefault, colour)
 		}
+	}
+	text := fmt.Sprintf("seed: %d, gen: %d", seed, generation)
+	for i, char := range text {
+		termbox.SetChar(i, 0, rune(char))
 	}
 	termbox.Flush()
 }
