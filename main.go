@@ -30,13 +30,13 @@ func main() {
 	height := h * 2
 
 	board := app.NewBoard(width, height)
-	board = app.Seed(board, seed)
+	board.Seed(seed)
 	display.Draw(board, seed, generation, width, height)
 
 	display.Loop(func() {
 		generation++
 		time.Sleep(time.Duration(delay) * time.Millisecond)
-		board = app.Tick(board)
+		board = board.Tick()
 		display.Draw(board, seed, generation, width, height)
 	})
 

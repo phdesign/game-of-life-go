@@ -42,16 +42,16 @@ loop:
 	}
 }
 
-func Draw(board app.Board, seed int64, generation, w, h int) {
-	for row := 0; row < len(board)-1; row += 2 {
-		for col := 0; col < len(board[0])-1; col += 2 {
+func Draw(board *app.Board, seed int64, generation, w, h int) {
+	for row := 0; row < len(board.Rows)-1; row += 2 {
+		for col := 0; col < len(board.Rows[0])-1; col += 2 {
 			x := col / 2
 			y := row / 2
 			quad := [4]uint8{
-				board[row][col],
-				board[row][col+1],
-				board[row+1][col],
-				board[row+1][col+1],
+				board.Rows[row][col],
+				board.Rows[row][col+1],
+				board.Rows[row+1][col],
+				board.Rows[row+1][col+1],
 			}
 			drawPixels(quad, x, y)
 		}
