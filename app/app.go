@@ -4,17 +4,17 @@ import (
 	"math/rand"
 )
 
-type coord struct {
+type CellPos struct {
 	col int
 	row int
 }
 
-func countNeighbours(board [][]int8, row int, col int) int {
+func countNeighbours(board Board, row int, col int) int {
 	count := 0
-	neighbours := [8]coord{
-		coord{col - 1, row - 1}, coord{col, row - 1}, coord{col + 1, row - 1},
-		coord{col - 1, row}, coord{col + 1, row},
-		coord{col - 1, row + 1}, coord{col, row + 1}, coord{col + 1, row + 1},
+	neighbours := [8]CellPos{
+		{col - 1, row - 1}, {col, row - 1}, {col + 1, row - 1},
+		{col - 1, row}, {col + 1, row},
+		{col - 1, row + 1}, {col, row + 1}, {col + 1, row + 1},
 	}
 
 	for _, c := range neighbours {
@@ -26,24 +26,24 @@ func countNeighbours(board [][]int8, row int, col int) int {
 	return count
 }
 
-func cloneBoard(orig [][]int8) [][]int8 {
-	clone := make([][]int8, len(orig))
+func cloneBoard(orig Board) Board {
+	clone := make(Board, len(orig))
 	for i := range orig {
-		clone[i] = make([]int8, len(orig[i]))
+		clone[i] = make(Row, len(orig[i]))
 		copy(clone[i], orig[i])
 	}
 	return clone
 }
 
-func NewBoard(w int, h int) [][]int8 {
-	board := make([][]int8, h)
+func NewBoard(w int, h int) Board {
+	board := make(Board, h)
 	for i := range board {
-		board[i] = make([]int8, w)
+		board[i] = make(Row, w)
 	}
 	return board
 }
 
-func Seed(board [][]int8, seed int64) [][]int8 {
+func Seed(board Board, seed int64) Board {
 	result := cloneBoard(board)
 	w := len(board[0])
 	rand.Seed(seed)
@@ -56,7 +56,7 @@ func Seed(board [][]int8, seed int64) [][]int8 {
 	return result
 }
 
-func Tick(board [][]int8) [][]int8 {
+func Tick(board Board) Board {
 	result := cloneBoard(board)
 	for row, cells := range board {
 		for col, alive := range cells {

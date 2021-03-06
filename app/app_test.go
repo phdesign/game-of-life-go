@@ -10,10 +10,10 @@ func TestSeed(t *testing.T) {
 	h := 3
 
 	t.Run("should initalise a board with some live cells", func(t *testing.T) {
-		want := [][]int8{
-			[]int8{0, 0, 0},
-			[]int8{0, 1, 0},
-			[]int8{1, 0, 0},
+		want := Board{
+			{0, 0, 0},
+			{0, 1, 0},
+			{1, 0, 0},
 		}
 		board := NewBoard(w, h)
 		got := Seed(board, 12)
@@ -43,10 +43,10 @@ func TestNewBoard(t *testing.T) {
 }
 
 func TestCountNeighbours(t *testing.T) {
-	board := [][]int8{
-		[]int8{1, 0, 0},
-		[]int8{1, 0, 0},
-		[]int8{1, 0, 0},
+	board := Board{
+		{1, 0, 0},
+		{1, 0, 0},
+		{1, 0, 0},
 	}
 
 	t.Run("should count number of alive neighbours", func(t *testing.T) {
@@ -57,17 +57,17 @@ func TestCountNeighbours(t *testing.T) {
 }
 
 func TestTick(t *testing.T) {
-	board := [][]int8{
-		[]int8{1, 0, 0},
-		[]int8{1, 0, 0},
-		[]int8{1, 0, 0},
+	board := Board{
+		{1, 0, 0},
+		{1, 0, 0},
+		{1, 0, 0},
 	}
 
 	t.Run("should evolve by one generation", func(t *testing.T) {
-		want := [][]int8{
-			[]int8{0, 0, 0},
-			[]int8{1, 1, 0},
-			[]int8{0, 0, 0},
+		want := Board{
+			{0, 0, 0},
+			{1, 1, 0},
+			{0, 0, 0},
 		}
 		got := Tick(board)
 
@@ -82,7 +82,7 @@ func assertIntEqual(t *testing.T, want, got int) {
 	}
 }
 
-func assertBoardEqual(t *testing.T, want, got [][]int8) {
+func assertBoardEqual(t *testing.T, want, got Board) {
 	t.Helper()
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("Want %v, got %v", want, got)
